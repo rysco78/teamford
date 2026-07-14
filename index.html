@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Ford | Join the ARC Team</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      min-height: 100vh;
+      background-color: #ef7845;
+      background-image: url('background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+    }
+
+    /* ── Outer layout: paper on left, couple on right ── */
+    .scene {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    /* ── Paper wrapper (holds tape pieces outside the clipped card) ── */
+    .paper-wrapper {
+      position: relative;
+      flex: 0 0 644px;
+      max-width: 644px;
+      z-index: 1;
+    }
+
+    /* Tape pieces */
+    .tape {
+      position: absolute;
+      width: 80px;
+      height: 24px;
+      background: rgba(200, 200, 210, 0.72);
+      border-radius: 2px;
+      z-index: 10;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .tape-tl { top: -12px; left: 40px;  transform: rotate(-7deg); }
+    .tape-tr { top: -12px; right: 40px; transform: rotate(6deg);  }
+    .tape-bl { bottom: -12px; left: 40px;  transform: rotate(5deg);  }
+    .tape-br { bottom: -12px; right: 40px; transform: rotate(-6deg); }
+
+    /* ── Paper card (form only) ── */
+    .paper-card {
+      background: #f4efe6;
+      border-radius: 2px;
+      box-shadow: 3px 6px 32px rgba(0, 0, 0, 0.25);
+      width: 100%;
+    }
+
+    /* ── Couple illustration — fixed to bottom of viewport ── */
+    .couple-side {
+      position: fixed;
+      bottom: 0;
+      right: 5vw;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .couple-img {
+      width: 580px;
+      max-width: 45vw;
+      height: auto;
+      display: block;
+    }
+
+    /* ── Form content ── */
+    .left {
+      padding: 100px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .heading {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #1e2d5c;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .subheading {
+      font-size: 1.1rem;
+      color: #1e2d5c;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    /* ── Form ── */
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+    }
+
+    .form input[type="text"],
+    .form input[type="email"],
+    .form input[type="url"] {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      font-family: Georgia, serif;
+      border: none;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.82);
+      color: #1e2d5c;
+      outline: none;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .form input:focus {
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 0 0 2px #1e2d5c;
+    }
+
+    .form input::placeholder {
+      color: rgba(30, 45, 92, 0.42);
+    }
+
+    .submit-btn {
+      margin-top: 4px;
+      padding: 14px;
+      width: 100%;
+      background: #1e2d5c;
+      color: #fff;
+      font-size: 1rem;
+      font-family: Georgia, serif;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .submit-btn:hover  { background: #2a3d7a; }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { background: #8a9bbf; cursor: not-allowed; }
+
+    .disclaimer {
+      font-size: 0.92rem;
+      color: #1e2d5c;
+      font-family: Georgia, serif;
+      margin-top: 10px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .message {
+      display: none;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-family: Georgia, serif;
+      margin-top: 2px;
+      line-height: 1.5;
+    }
+    .message.success {
+      background: rgba(255,255,255,0.7);
+      color: #1e4d20;
+      border: 1px solid #a8d5aa;
+    }
+    .message.error {
+      background: rgba(255,255,255,0.7);
+      color: #8b1a1a;
+      border: 1px solid #e0a0a0;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 700px) {
+      body { padding: 40px 16px 0; }
+
+      .scene {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .paper-wrapper {
+        flex: none;
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .couple-side {
+        position: static;
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        padding-top: 16px;
+        padding-bottom: 0;
+        line-height: 0;
+      }
+
+      .couple-img {
+        width: 100%;
+        max-width: 100%;
+        display: block;
+        margin-bottom: 0;
+      }
+
+      .left {
+        padding: 36px 28px 36px;
+      }
+
+      .heading { font-size: 1.6rem; }
+
+      .field-row { grid-template-columns: 1fr; }
+
+      .tape-tl { left: 20px; }
+      .tape-tr { right: 20px; }
+      .tape-bl { left: 20px; }
+      .tape-br { right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scene">
+
+    <div class="paper-wrapper">
+      <div class="tape tape-tl"></div>
+      <div class="tape tape-tr"></div>
+      <div class="tape tape-bl"></div>
+      <div class="tape tape-br"></div>
+
+      <div class="paper-card">
+        <div class="left">
+          <h1 class="heading">Are you an influencer?</h1>
+          <p class="subheading">Join Team Ford to help promote Tori's books and receive access to ARCs</p>
+
+          <form class="form" id="signupForm" novalidate>
+            <div class="field-row">
+              <input type="text"  name="firstName"  placeholder="First Name *" required />
+              <input type="text"  name="lastName"   placeholder="Last Name *"  required />
+            </div>
+            <input type="email" name="email"      placeholder="Email *"        required />
+            <input type="url"   name="igLink"     placeholder="Instagram Link" />
+            <input type="url"   name="tiktokLink" placeholder="TikTok Link"    />
+
+            <button type="submit" class="submit-btn" id="submitBtn">Join Team Ford</button>
+
+            <div class="message success" id="successMsg">
+              Thank you for applying! You will be notified within 7 days if accepted into Team Ford.
+            </div>
+            <div class="message error" id="errorMsg">
+              Something went wrong. Please try again or email tori@heytoriford.com directly.
+            </div>
+
+            <p class="disclaimer">You will be notified within 7 days if accepted into Team Ford.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Couple illustration on the background -->
+    <div class="couple-side">
+      <img src="couple.png" alt="Fallin' Tides by Tori Ford" class="couple-img" />
+    </div>
+
+  </div>
+
+  <script>
+    const APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+    const form       = document.getElementById('signupForm');
+    const submitBtn  = document.getElementById('submitBtn');
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg   = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const firstName = form.firstName.value.trim();
+      const lastName  = form.lastName.value.trim();
+      const email     = form.email.value.trim();
+
+      if (!firstName || !lastName || !email) {
+        errorMsg.textContent = 'Please fill in all required fields (First Name, Last Name, Email).';
+        errorMsg.style.display = 'block';
+        successMsg.style.display = 'none';
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        errorMsg.textContent = 'Please enter a valid email address.';
+        errorMsg.style.display = 'block';
+        successMsg.style.display = 'none';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+      errorMsg.style.display   = 'none';
+      successMsg.style.display = 'none';
+
+      const payload = {
+        firstName,
+        lastName,
+        email,
+        igLink:     form.igLink.value.trim()    || '',
+        tiktokLink: form.tiktokLink.value.trim() || '',
+      };
+
+      try {
+        const res  = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+
+        if (data.result === 'success') {
+          form.reset();
+          successMsg.style.display = 'block';
+          submitBtn.textContent = 'Application Sent!';
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (err) {
+        console.error(err);
+        errorMsg.textContent = 'Something went wrong. Please try again or email tori@heytoriford.com directly.';
+        errorMsg.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Join Team Ford';
+      }
+    });
+  </script>
+
+</body>
+</html>
